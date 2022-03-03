@@ -3,6 +3,7 @@ package com.sebastianwrobel.recipe.service;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +18,8 @@ import com.sebastianwrobel.recipe.domain.Recipe;
 @ComponentScan("com.sebastianwrobel")
 public class FileService {
 	
-	private  ArrayList<Recipe> recipes = new ArrayList<>();
+	private List<Recipe> recipes = new ArrayList<>();
 		
-	@Bean
 	public List<Recipe> readRecipes() throws IOException{
 		
 		BufferedReader bufferedReader = new BufferedReader(new FileReader("recipe.txt"));	 
@@ -32,10 +32,10 @@ public class FileService {
                     .setEscape('\\')
                     .build()
                     .parse(bufferedReader);
-
+            if(recipes.size() == 0) {
             for (CSVRecord record : csvRecords){
             	
-                Recipe recipe = new Recipe();
+            	Recipe recipe = new Recipe();
                 recipe.setCookingMinutes(Integer.parseInt(record.get("Cooking Minutes"))); 
                 recipe.setDairyFree(Boolean.parseBoolean(record.get("Dairy Free")));
                 recipe.setGlutenFree(Boolean.parseBoolean(record.get("Gluten Free")));
@@ -48,11 +48,13 @@ public class FileService {
                 recipe.setTitle(record.get("Title"));
                 recipe.setVegan(Boolean.parseBoolean(record.get("Vegan")));
                 recipe.setVegetarian(Boolean.parseBoolean(record.get("Vegetarian")));
+               
                 recipes.add(recipe);
-            	
-            	
             }
-        
+            }
+           bufferedReader.close();
+          System.out.println("fileservice "+recipes.size());  
+          
         return recipes;  		
 	}
 }
